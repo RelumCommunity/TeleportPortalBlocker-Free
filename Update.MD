@@ -32,7 +32,7 @@
 >> ## Added
 >> - Tested till 1.20.2
 >> ## Changes
->> - Changed versionchecker, now is hosted on our website 
+>> - Changed version checker, now is hosted on our website 
 >> - Fixed api for non legacy versions
 >> ## Removed
 >> - Removed stacktrace when the website connection is absent (there is an informative message instead)
@@ -65,8 +65,8 @@
 >> - End Portal option that check how many blocks of a type you have place 
 >> - New permissions below
 >> ## Changes
->> - Fixed an error with endportal blockthough achievement option 
->> - Fixed an error with endgateway blockthough achievement option 
+>> - Fixed an error with endportal block trough achievement option 
+>> - Fixed an error with endgateway block trough achievement option 
 >> - Fixed an error with netherportal data reset permissions 
 >> - Changed database commands, check the new commands in game and new permissions below 
 >> - Changed netherportal database names (just rename them adding "np" before blocksbreak and blocksplace if you don't want to reset them)
@@ -91,7 +91,7 @@
 >> - 1.15-1.15.1 compatibility 
 >> - More lang customization, now you can choose where you like to have plugin prefix just adding or removing %prefix%
 >> ## Changes
->> - Fixed VersioChecker won't work due a coding error made in previous versions
+>> - Fixed VersionChecker won't work due a coding error made in previous versions
 
 > # 1.6
 >> ## Added
@@ -108,12 +108,12 @@
 >> - Plugin is now lighter 
 >> - Changed a config option name ("Teleports" TO "BlockThroughAchievement")
 >> - Changed some codes 
->> - Fixed some unusefull controls 
+>> - Fixed some unuseful controls
 >> - Using the latest 1.9 build EndGateway will work properly
 
 > # 1.3
 >> ## Added
->> - 1.7.2-1.14.4 surpport
+>> - 1.7.2-1.14.4 support
 >> - PermanentBlock ErrorMessage
 >> ## Changes
 >> - 1.9 Error caused by bad spigot build (EndGateway will be disabled if server is using spigot 1.9)
