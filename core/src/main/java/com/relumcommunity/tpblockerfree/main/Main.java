@@ -35,7 +35,7 @@ public class Main extends JavaPlugin {
         pluginVersion = plugin.getDescription().getVersion();
         String ver = Bukkit.getBukkitVersion();
         PluginManager bpm = Bukkit.getPluginManager();
-        File sqlite = new File(getDataFolder() + "/BlocksData.sqlite");
+        File sqlite = new File(getDataFolder(), "BlocksData.sqlite");
         String[] version = ver.split(" ");
         String[] server = ver.split("-");
         if (ver.contains("Spigot")) {
@@ -63,17 +63,6 @@ public class Main extends JavaPlugin {
             }
         }
         getCommand("tpblocker").setExecutor(new Commands());
-        if (!sqlite.exists()) {
-            try {
-                sqlite.createNewFile();
-            } catch (IOException e) {
-                log.severe("An error occurred while creating the sqlite file");
-                if (plugin.getConfig().getBoolean("Debug")) {
-                    log.severe("[DEBUG] Debug trace: " + Arrays.toString(e.getStackTrace()));
-                }
-                throw new RuntimeException(e);
-            }
-        }
         try {
             blocksData = new BlocksData(sqlite);
         } catch (ClassNotFoundException | SQLException e) {
@@ -112,21 +101,8 @@ public class Main extends JavaPlugin {
     private void copyFile(String fileName) throws IOException {
         File file = new File(plugin.getDataFolder() + "/lang/", fileName);
         if (!file.exists()) {
-            plugin.getDataFolder().mkdirs();
-            file.getParentFile().mkdirs();
-            file.createNewFile();
+            saveResource("lang/" + fileName, false);
             log.info("Creating language file '" + fileName + "'.");
-            InputStream in = getClass().getResourceAsStream("/lang/" + fileName);
-            if (in != null) {
-                OutputStream out = new FileOutputStream(file);
-                byte[] buffer = new byte[63];
-                int current;
-                while ((current = in.read(buffer)) > -1) {
-                    out.write(buffer, 0, current);
-                }
-                out.close();
-                in.close();
-            }
         }
     }
     public void reloadFiles(CommandSender sender) {

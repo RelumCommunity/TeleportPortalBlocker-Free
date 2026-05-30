@@ -66,7 +66,7 @@ public class Commands implements CommandExecutor {
                                 if (alias == null || alias.equals("eg") || alias.equals("ep") || alias.equals("np")) {
                                     if (sender.hasPermission(perms.get("resetdata"))) {
                                         BlocksData.getCache().forEach((k, v) -> v.resetStat(args[1].toLowerCase(), alias));
-                                        sender.sendMessage(cfg.getString("Database.ResetData", "Missing: Database.ResetData").replaceAll("%prefix%", prefix).replaceAll("%kind%", args[1]).replaceAll("%type%", alias == null ? "" : alias).replaceAll("&", "§"));
+                                        sender.sendMessage(lang.getString("Database.ResetData", "Missing: Database.ResetData").replaceAll("%prefix%", prefix).replaceAll("%kind%", args[1]).replaceAll("%type%", alias == null ? "" : alias).replaceAll("&", "§"));
                                     } else {
                                         sender.sendMessage(noPerm);
                                     }
@@ -80,9 +80,9 @@ public class Commands implements CommandExecutor {
                                     if (sender.hasPermission(perms.get("resetname"))) {
                                         if (BlocksData.getCache().get(args[1]) != null) {
                                             BlocksData.getCache().get(args[1]).resetStat(args[2].toLowerCase(), alias);
-                                            sender.sendMessage(cfg.getString("Database.ResetName", "Missing: Database.ResetName").replaceAll("%prefix%", prefix).replaceAll("%kind%", args[2]).replaceAll("%type%", alias == null ? "" : alias).replaceAll("%player%", args[1]).replaceAll("&", "§"));
+                                            sender.sendMessage(lang.getString("Database.ResetName", "Missing: Database.ResetName").replaceAll("%prefix%", prefix).replaceAll("%kind%", args[2]).replaceAll("%type%", alias == null ? "" : alias).replaceAll("%player%", args[1]).replaceAll("&", "§"));
                                         } else {
-                                            sender.sendMessage(cfg.getString("Database.WrongName", "Missing: Database.WrongName").replaceAll("%prefix%", prefix).replaceAll("%player%", args[1]).replaceAll("&", "§"));
+                                            sender.sendMessage(lang.getString("Database.WrongName", "Missing: Database.WrongName").replaceAll("%prefix%", prefix).replaceAll("%player%", args[1]).replaceAll("&", "§"));
                                         }
                                     } else {
                                         sender.sendMessage(noPerm);
