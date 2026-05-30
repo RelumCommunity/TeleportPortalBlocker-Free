@@ -77,12 +77,16 @@ public class BlocksData {
         }
         public void resetStat(String action, String key) {
             if (action.equals("all")) {
-                stats.forEach((k, v) -> v.replaceAll((k2, v2) -> 0));
+                if (key.equals("all")) {
+                    stats.forEach((k, v) -> v.replaceAll((k2, v2) -> 0));
+                } else {
+                    stats.forEach((k, v) -> v.replace(key, 0));
+                }
             } else {
                 if (key.equals("all")) {
                     stats.get(action).replaceAll((k, v) -> 0);
                 } else {
-                    stats.get(action).put(key, 0);
+                    stats.get(action).replace(key, 0);
                 }
             }
         }
