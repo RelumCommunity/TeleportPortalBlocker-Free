@@ -4,7 +4,6 @@ import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.chat.hover.content.Text;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -23,8 +22,7 @@ public class VersionChecker implements Listener {
     private static final String tpblockerfree = "https://relumcommunity.com/progetti/plugins/tpblockerfree/redirect.html";
     private static final String tpblockerpremium = "https://relumcommunity.com/progetti/plugins/tpblockerpremium/redirect.html";
     public VersionChecker() {
-        FileConfiguration cfg = Main.getCfg();
-        if (cfg.getBoolean("ConsoleCheckUpdate")) {
+        if (Main.getCfg().getBoolean("ConsoleCheckUpdate")) {
             Logger log = Main.getPlugin().getLog();
             log.info(" ");
             log.info("         -= TPBlockerFree =-");
@@ -53,12 +51,11 @@ public class VersionChecker implements Listener {
     public void onPlayerJoin(PlayerJoinEvent e) {
         Player p = e.getPlayer();
         if (p.hasPermission("tpblocker.update")) {
-            FileConfiguration cfg = Main.getCfg();
-            String prefix = cfg.getString("Prefix", "§7[TPBlockerFree] ").replaceAll("&", "§");
+            String prefix = Main.getCfg().getString("Prefix", "§7[TPBlockerFree] ").replaceAll("&", "§");
             TextComponent component = new TextComponent(prefix + "§eTP Blocker Premium is OUT! Click here to give a look!");
             component.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("§bClick to open the plugin page.")));
             component.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, tpblockerpremium));
-            if (cfg.getBoolean("CheckUpdate")) {
+            if (Main.getCfg().getBoolean("CheckUpdate")) {
                 if (!latestVer.equals(version)) {
                     TextComponent MSG = new TextComponent(prefix + "§cYou are not in the latest version, please update the plugin from our plugin page");
                     MSG.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("§bClick to open the plugin page.")));

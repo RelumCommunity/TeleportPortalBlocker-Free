@@ -1,6 +1,9 @@
 > # 3.0.1:
 >> ## Changes
 >> - Fixed a lang issue when commands are executed
+>> - Fixed the "all" case for commands, now should always work as intended
+>> - Data reset code has been reworked to work better
+>> - Cleaned a bit of code
 
 > # 3.0.0:
 > ### REQUIREMENT: Server running with at least java14
