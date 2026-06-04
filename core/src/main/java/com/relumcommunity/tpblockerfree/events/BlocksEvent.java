@@ -9,6 +9,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -17,6 +18,9 @@ public class BlocksEvent implements Listener {
     private static final Map<String, Map<String, Map<String, Boolean>>> blocks = new HashMap<>(Map.of("Break", new HashMap<>(), "Place", new HashMap<>()));
     private static final Map<String, String> aliases = Map.of("eg", "EndGateway", "ep", "EndPortal", "np", "NetherPortal");
     public BlocksEvent() {
+        reloadBlocks();
+    }
+    public static void reloadBlocks() {
         FileConfiguration cfg = Main.getCfg();
         for (Map.Entry<String, String> entry : aliases.entrySet()) {
             String key = entry.getValue();
@@ -37,6 +41,12 @@ public class BlocksEvent implements Listener {
     public void onJoin(PlayerJoinEvent e) {
         if (BlocksData.getCache().get(e.getPlayer().getName()) == null) {
             BlocksData.addPlayerToCache(e.getPlayer().getName(), null, null);
+        }
+    }
+    @EventHandler
+    public void onLeft(PlayerQuitEvent e) {
+        if (BlocksData.getCache().get(e.getPlayer().getName()) != null) {
+            BlocksData.syncLeftPlayer(e.getPlayer().getName());
         }
     }
     private void BlocksHandler(Player p, String Type, String block) {

@@ -49,7 +49,7 @@ public class TPEvent implements Listener {
                     if (blockscounted != totalblocks) {
                         e.setCancelled(true);
                         if (cfg.getBoolean(cause + ".ErrorMessage")) {
-                            p.sendMessage(lang.getString(cause + ".BreakPlaceNeeded", "Missing text: " + cause + ".BreakPlaceNeeded").replaceAll("%prefix%", prefix).replaceAll("%kinds%", lang.getString("Kinds.Break","break")).replaceAll("%blockscounted%", String.valueOf(blockscounted)).replaceAll("%totalblocks%", String.valueOf(totalblocks)).replaceAll("%blocktype%", Material.valueOf(cfg.getString(cause + ".BlockBreak.Block")).name()).replaceAll("&", "§"));
+                            p.sendMessage(lang.getString(cause + ".BreakPlaceNeeded", "Missing text: " + cause + ".BreakPlaceNeeded").replaceAll("%prefix%", prefix).replaceAll("%kinds%", lang.getString("Kinds.Break","break")).replaceAll("%blockscounted%", String.valueOf(blockscounted)).replaceAll("%totalblocks%", String.valueOf(totalblocks)).replaceAll("%blocktype%", Material.matchMaterial(cfg.getString(cause + ".BlockBreak.Block", "STONE")).name()).replaceAll("&", "§"));
                         }
                     }
                 }
@@ -59,7 +59,7 @@ public class TPEvent implements Listener {
                     if (blockscounted != totalblocks) {
                         e.setCancelled(true);
                         if (cfg.getBoolean(cause + ".ErrorMessage")) {
-                            p.sendMessage(lang.getString(cause + ".BreakPlaceNeeded", "Missing text: " + cause + ".BreakPlaceNeeded").replaceAll("%prefix%", prefix).replaceAll("%kinds%", lang.getString("Kinds.Place","place")).replaceAll("%blockscounted%", String.valueOf(blockscounted)).replaceAll("%totalblocks%", String.valueOf(totalblocks)).replaceAll("%blocktype%", Material.valueOf(cfg.getString(cause + ".BlockPlace.Block")).name()).replaceAll("&", "§"));
+                            p.sendMessage(lang.getString(cause + ".BreakPlaceNeeded", "Missing text: " + cause + ".BreakPlaceNeeded").replaceAll("%prefix%", prefix).replaceAll("%kinds%", lang.getString("Kinds.Place","place")).replaceAll("%blockscounted%", String.valueOf(blockscounted)).replaceAll("%totalblocks%", String.valueOf(totalblocks)).replaceAll("%blocktype%", Material.matchMaterial(cfg.getString(cause + ".BlockPlace.Block", "STONE")).name()).replaceAll("&", "§"));
                         }
                     }
                 }
