@@ -28,8 +28,8 @@
                         </goals>
                         <configuration>
                             <target>
-                                <jar destfile="${project.build.directory}/${project.build.finalName}.jar" update="true">
-                                    <zipfileset src="${project.basedir}/../legacy/target/TPBlockerFree-legacy-${revision}.jar"/>
+                                <jar destfile="${project.basedir}/../core/target/TPBlockerFree-core-${revision}.jar" update="true">
+                                    <zipfileset src="${project.build.directory}/${project.build.finalName}.jar"/>
                                 </jar>
                             </target>
                         </configuration>
