@@ -57,7 +57,7 @@ public class VersionChecker implements Listener {
     @EventHandler
     private void onJoin(PlayerJoinEvent e) {
         Player p = e.getPlayer();
-        if (p.hasPermission("tpblocker.update")) {
+        if (p.hasPermission("tpblocker.updates")) {
             String prefix = Main.getCfg().getString("Prefix", "§7[TPBlockerFree] ").replaceAll("&", "§");
             TextComponent component = new TextComponent(prefix + "§eTP Blocker Premium is OUT! Click here to give a look!");
             component.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("§bClick to open the plugin page.")));
