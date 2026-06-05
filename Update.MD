@@ -1,9 +1,11 @@
-> # 3.0.1:
+> # 3.1.0:
 >> ## Changes
 >> - Fixed a lang issue when commands are executed
 >> - Fixed the "all" case for commands, now should always work as intended
 >> - Data reset code has been reworked to work better
->> - Cleaned a bit of code
+>> - Now reload command will effectively reload chosen blocks from break and place options
+>> - Data now is saved by user when they left in order to ensure almost none data loss if the server crashes
+>> - Code has been made more consistent and covers better some edge cases
 
 > # 3.0.0:
 > ### REQUIREMENT: Server running with at least java14

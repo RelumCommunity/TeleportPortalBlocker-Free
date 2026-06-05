@@ -33,22 +33,22 @@ public class Main extends JavaPlugin {
     public void onEnable() {
         plugin = this;
         pluginVersion = plugin.getDescription().getVersion();
-        String ver = Bukkit.getBukkitVersion();
         PluginManager bpm = Bukkit.getPluginManager();
         File sqlite = new File(getDataFolder(), "BlocksData.sqlite");
-        String[] version = ver.split(" ");
-        String[] server = ver.split("-");
-        if (ver.contains("Spigot")) {
-            log.info("TPBlockerFree is using: " + server[1] + " | Version: " + version[1] + version[2]);
+        String[] ver = Bukkit.getBukkitVersion().split("-")[0].split("\\.");
+        String version = ver[0] + "." + ver[1] + (ver.length > 2 ? "." + ver[2] : "");
+        String server = Bukkit.getVersion().contains("Spigot") ? "Spigot" : Bukkit.getName();
+        if (server.equals("Spigot") || server.equals("Paper")) {
+            log.info("TPBlockerFree is using: " + server + " | Version: " + version);
         } else {
-            log.info("TPBlockerFree is using: " + ver + " UNTESTED SERVER VERSION");
+            log.info("TPBlockerFree is using: " + version + " UNTESTED SERVER VERSION");
         }
         saveDefaultConfig();
         cfg = plugin.getConfig();
         setupLang();
         new VersionChecker();
         bpm.registerEvents(new BlocksEvent(), plugin);
-        int mcVersion = Integer.parseInt(server[0].split("\\.")[0]) > 1 ? Integer.parseInt(server[0].split("\\.")[0]) : Integer.parseInt(server[0].split("\\.")[1]);
+        int mcVersion = Integer.parseInt(version.split("\\.")[0]) > 1 ? Integer.parseInt(version.split("\\.")[0]) : Integer.parseInt(version.split("\\.")[1]);
         if (mcVersion >= 12) {
             bpm.registerEvents(new TPEvent(), plugin);
         } else {
@@ -75,12 +75,14 @@ public class Main extends JavaPlugin {
         log.info("TPBlockerFree " + pluginVersion + " has been enabled");
     }
     public void onDisable() {
-        try {
-            blocksData.closeConnection();
-        } catch (SQLException e) {
-            log.warning("An error occurred while closing connection with the sqlite file");
-            if (plugin.getConfig().getBoolean("Debug")) {
-                log.warning("[DEBUG] Debug trace: " + Arrays.toString(e.getStackTrace()));
+        if (blocksData != null) {
+            try {
+                blocksData.closeConnection();
+            } catch (SQLException e) {
+                log.warning("An error occurred while closing connection with the sqlite file");
+                if (plugin.getConfig().getBoolean("Debug")) {
+                    log.warning("[DEBUG] Debug trace: " + Arrays.toString(e.getStackTrace()));
+                }
             }
         }
         log.info("TPBlockerFree " + pluginVersion + " has been disabled");
@@ -110,6 +112,7 @@ public class Main extends JavaPlugin {
         reloadConfig();
         cfg = plugin.getConfig();
         setupLang();
+        BlocksEvent.reloadBlocks();
         sender.sendMessage(lang.getString("Messages.Reload", "Plugin Reloaded").replaceAll("%prefix%", cfg.getString("Prefix", "§7[TPBlockerFree] ")).replaceAll("&", "§"));
     }
 }

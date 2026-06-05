@@ -6,6 +6,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.advancement.Advancement;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -20,7 +21,14 @@ public class TPEvent implements Listener {
     private static final Map<String, String> aliases = Map.of("EndGateway", "eg", "EndPortal", "ep","NetherPortal", "np");
     private static final Map<String, String> legacy = Map.of("EndGateway", "END_GATEWAY", "EndPortal", "ENDER_PORTAL", "NetherPortal", "PORTAL");
     protected boolean checkAchievement(Player p, String achievement) {
-        return p.getAdvancementProgress(Bukkit.getAdvancement(NamespacedKey.minecraft(achievement))).isDone();
+        Advancement advancement = Bukkit.getAdvancement(NamespacedKey.minecraft(achievement));
+        if (advancement != null) {
+            return p.getAdvancementProgress(advancement).isDone();
+        }
+        if (Main.getCfg().getBoolean("Debug")) {
+            Main.getPlugin().getLogger().warning("[DEBUG] The setted achievement: " + achievement + " | doesn't exists, the plugin will consider it as acquired in order to avoid issues, PLS FIX IT!");
+        }
+        return true;
     }
     @EventHandler
     public void onTP(PlayerTeleportEvent e) {
@@ -49,7 +57,7 @@ public class TPEvent implements Listener {
                     if (blockscounted != totalblocks) {
                         e.setCancelled(true);
                         if (cfg.getBoolean(cause + ".ErrorMessage")) {
-                            p.sendMessage(lang.getString(cause + ".BreakPlaceNeeded", "Missing text: " + cause + ".BreakPlaceNeeded").replaceAll("%prefix%", prefix).replaceAll("%kinds%", lang.getString("Kinds.Break","break")).replaceAll("%blockscounted%", String.valueOf(blockscounted)).replaceAll("%totalblocks%", String.valueOf(totalblocks)).replaceAll("%blocktype%", Material.valueOf(cfg.getString(cause + ".BlockBreak.Block")).name()).replaceAll("&", "§"));
+                            p.sendMessage(lang.getString(cause + ".BreakPlaceNeeded", "Missing text: " + cause + ".BreakPlaceNeeded").replaceAll("%prefix%", prefix).replaceAll("%kinds%", lang.getString("Kinds.Break","break")).replaceAll("%blockscounted%", String.valueOf(blockscounted)).replaceAll("%totalblocks%", String.valueOf(totalblocks)).replaceAll("%blocktype%", Material.matchMaterial(cfg.getString(cause + ".BlockBreak.Block", "STONE")).name()).replaceAll("&", "§"));
                         }
                     }
                 }
@@ -59,7 +67,7 @@ public class TPEvent implements Listener {
                     if (blockscounted != totalblocks) {
                         e.setCancelled(true);
                         if (cfg.getBoolean(cause + ".ErrorMessage")) {
-                            p.sendMessage(lang.getString(cause + ".BreakPlaceNeeded", "Missing text: " + cause + ".BreakPlaceNeeded").replaceAll("%prefix%", prefix).replaceAll("%kinds%", lang.getString("Kinds.Place","place")).replaceAll("%blockscounted%", String.valueOf(blockscounted)).replaceAll("%totalblocks%", String.valueOf(totalblocks)).replaceAll("%blocktype%", Material.valueOf(cfg.getString(cause + ".BlockPlace.Block")).name()).replaceAll("&", "§"));
+                            p.sendMessage(lang.getString(cause + ".BreakPlaceNeeded", "Missing text: " + cause + ".BreakPlaceNeeded").replaceAll("%prefix%", prefix).replaceAll("%kinds%", lang.getString("Kinds.Place","place")).replaceAll("%blockscounted%", String.valueOf(blockscounted)).replaceAll("%totalblocks%", String.valueOf(totalblocks)).replaceAll("%blocktype%", Material.matchMaterial(cfg.getString(cause + ".BlockPlace.Block", "STONE")).name()).replaceAll("&", "§"));
                         }
                     }
                 }
