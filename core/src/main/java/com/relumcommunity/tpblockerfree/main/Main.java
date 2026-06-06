@@ -33,22 +33,22 @@ public class Main extends JavaPlugin {
     public void onEnable() {
         plugin = this;
         pluginVersion = plugin.getDescription().getVersion();
-        String ver = Bukkit.getBukkitVersion();
         PluginManager bpm = Bukkit.getPluginManager();
-        File sqlite = new File(getDataFolder() + "/BlocksData.sqlite");
-        String[] version = ver.split(" ");
-        String[] server = ver.split("-");
-        if (ver.contains("Spigot")) {
-            log.info("TPBlockerFree is using: " + server[1] + " | Version: " + version[1] + version[2]);
+        File sqlite = new File(getDataFolder(), "BlocksData.sqlite");
+        String[] ver = Bukkit.getBukkitVersion().split("-")[0].split("\\.");
+        String version = ver[0] + "." + ver[1] + (ver.length > 2 ? "." + ver[2] : "");
+        String server = Bukkit.getVersion().contains("Spigot") ? "Spigot" : Bukkit.getName();
+        if (server.equals("Spigot") || server.equals("Paper")) {
+            log.info("TPBlockerFree is using: " + server + " | Version: " + version);
         } else {
-            log.info("TPBlockerFree is using: " + ver + " UNTESTED SERVER VERSION");
+            log.info("TPBlockerFree is using: " + version + " UNTESTED SERVER VERSION");
         }
         saveDefaultConfig();
         cfg = plugin.getConfig();
         setupLang();
         new VersionChecker();
         bpm.registerEvents(new BlocksEvent(), plugin);
-        int mcVersion = Integer.parseInt(server[0].split("\\.")[0]) > 1 ? Integer.parseInt(server[0].split("\\.")[0]) : Integer.parseInt(server[0].split("\\.")[1]);
+        int mcVersion = Integer.parseInt(version.split("\\.")[0]) > 1 ? Integer.parseInt(version.split("\\.")[0]) : Integer.parseInt(version.split("\\.")[1]);
         if (mcVersion >= 12) {
             bpm.registerEvents(new TPEvent(), plugin);
         } else {
@@ -63,17 +63,6 @@ public class Main extends JavaPlugin {
             }
         }
         getCommand("tpblocker").setExecutor(new Commands());
-        if (!sqlite.exists()) {
-            try {
-                sqlite.createNewFile();
-            } catch (IOException e) {
-                log.severe("An error occurred while creating the sqlite file");
-                if (plugin.getConfig().getBoolean("Debug")) {
-                    log.severe("[DEBUG] Debug trace: " + Arrays.toString(e.getStackTrace()));
-                }
-                throw new RuntimeException(e);
-            }
-        }
         try {
             blocksData = new BlocksData(sqlite);
         } catch (ClassNotFoundException | SQLException e) {
@@ -86,12 +75,14 @@ public class Main extends JavaPlugin {
         log.info("TPBlockerFree " + pluginVersion + " has been enabled");
     }
     public void onDisable() {
-        try {
-            blocksData.closeConnection();
-        } catch (SQLException e) {
-            log.warning("An error occurred while closing connection with the sqlite file");
-            if (plugin.getConfig().getBoolean("Debug")) {
-                log.warning("[DEBUG] Debug trace: " + Arrays.toString(e.getStackTrace()));
+        if (blocksData != null) {
+            try {
+                blocksData.closeConnection();
+            } catch (SQLException e) {
+                log.warning("An error occurred while closing connection with the sqlite file");
+                if (plugin.getConfig().getBoolean("Debug")) {
+                    log.warning("[DEBUG] Debug trace: " + Arrays.toString(e.getStackTrace()));
+                }
             }
         }
         log.info("TPBlockerFree " + pluginVersion + " has been disabled");
@@ -112,21 +103,8 @@ public class Main extends JavaPlugin {
     private void copyFile(String fileName) throws IOException {
         File file = new File(plugin.getDataFolder() + "/lang/", fileName);
         if (!file.exists()) {
-            plugin.getDataFolder().mkdirs();
-            file.getParentFile().mkdirs();
-            file.createNewFile();
+            saveResource("lang/" + fileName, false);
             log.info("Creating language file '" + fileName + "'.");
-            InputStream in = getClass().getResourceAsStream("/lang/" + fileName);
-            if (in != null) {
-                OutputStream out = new FileOutputStream(file);
-                byte[] buffer = new byte[63];
-                int current;
-                while ((current = in.read(buffer)) > -1) {
-                    out.write(buffer, 0, current);
-                }
-                out.close();
-                in.close();
-            }
         }
     }
     public void reloadFiles(CommandSender sender) {
@@ -134,6 +112,7 @@ public class Main extends JavaPlugin {
         reloadConfig();
         cfg = plugin.getConfig();
         setupLang();
+        BlocksEvent.reloadBlocks();
         sender.sendMessage(lang.getString("Messages.Reload", "Plugin Reloaded").replaceAll("%prefix%", cfg.getString("Prefix", "§7[TPBlockerFree] ")).replaceAll("&", "§"));
     }
 }

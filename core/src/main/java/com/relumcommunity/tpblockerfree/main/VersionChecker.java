@@ -4,7 +4,6 @@ import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.chat.hover.content.Text;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -23,15 +22,21 @@ public class VersionChecker implements Listener {
     private static final String tpblockerfree = "https://relumcommunity.com/progetti/plugins/tpblockerfree/redirect.html";
     private static final String tpblockerpremium = "https://relumcommunity.com/progetti/plugins/tpblockerpremium/redirect.html";
     public VersionChecker() {
-        FileConfiguration cfg = Main.getCfg();
-        if (cfg.getBoolean("ConsoleCheckUpdate")) {
-            Logger log = Main.getPlugin().getLog();
-            log.info(" ");
-            log.info("         -= TPBlockerFree =-");
-            try {
-                HttpsURLConnection connection = (HttpsURLConnection)(new URL("https://relumcommunity.com/progetti/plugins/tpblockerfree/version.json")).openConnection();
-                latestVer = (new BufferedReader(new InputStreamReader(connection.getInputStream()))).readLine();
-                if (!version.equals(latestVer)) {
+        Logger log = Main.getPlugin().getLog();
+        try {
+            HttpsURLConnection connection = (HttpsURLConnection) (new URL("https://relumcommunity.com/progetti/plugins/tpblockerfree/version.json")).openConnection();
+            latestVer = (new BufferedReader(new InputStreamReader(connection.getInputStream()))).readLine();
+            if (Main.getCfg().getBoolean("ConsoleCheckUpdate")) {
+                log.info(" ");
+                log.info("         -= TPBlockerFree =-");
+                if (latestVer == null) {
+                    log.severe(" AN ERROR OCCURED WHILE FETCHING LATEST VERSION!");
+                    log.severe(" WE ARE NOT ABLE TO EVALUATE THIS VERSION!");
+                    log.warning(" ");
+                    log.warning("Current: " + version);
+                    log.severe("Latest: ERROR");
+                    log.warning("Download: " + tpblockerfree);
+                } else if (!version.equals(latestVer)) {
                     log.warning("    You do not have the latest version!");
                     log.warning(" ");
                     log.warning("Current: " + version);
@@ -40,26 +45,25 @@ public class VersionChecker implements Listener {
                 } else {
                     log.info("    You are running the latest version!");
                 }
-            } catch (IOException e) {
-                log.severe("Could not make connection to RelumCommunity.com to verify the latest version!");
+                log.info(" ");
+                log.info("TP Blocker Premium is OUT!");
+                log.info("Download: " + tpblockerpremium);
+                log.info(" ");
             }
-            log.info(" ");
-            log.info("TP Blocker Premium is OUT!");
-            log.info("Download: " + tpblockerpremium);
-            log.info(" ");
+        } catch (IOException e) {
+            log.severe("Could not make connection to RelumCommunity.com to verify the latest version!");
         }
     }
     @EventHandler
-    public void onPlayerJoin(PlayerJoinEvent e) {
+    private void onJoin(PlayerJoinEvent e) {
         Player p = e.getPlayer();
-        if (p.hasPermission("tpblocker.update")) {
-            FileConfiguration cfg = Main.getCfg();
-            String prefix = cfg.getString("Prefix", "§7[TPBlockerFree] ").replaceAll("&", "§");
+        if (p.hasPermission("tpblocker.updates")) {
+            String prefix = Main.getCfg().getString("Prefix", "§7[TPBlockerFree] ").replaceAll("&", "§");
             TextComponent component = new TextComponent(prefix + "§eTP Blocker Premium is OUT! Click here to give a look!");
             component.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("§bClick to open the plugin page.")));
             component.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, tpblockerpremium));
-            if (cfg.getBoolean("CheckUpdate")) {
-                if (!latestVer.equals(version)) {
+            if (Main.getCfg().getBoolean("CheckUpdate")) {
+                if (latestVer != null && !latestVer.equals(version)) {
                     TextComponent MSG = new TextComponent(prefix + "§cYou are not in the latest version, please update the plugin from our plugin page");
                     MSG.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("§bClick to open the plugin page.")));
                     MSG.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL , tpblockerfree));

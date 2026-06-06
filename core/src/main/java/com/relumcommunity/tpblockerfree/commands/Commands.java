@@ -16,11 +16,10 @@ public class Commands implements CommandExecutor {
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         if (sender != null) {
             if (cmd.getName().equalsIgnoreCase("tpblocker")) {
-                FileConfiguration cfg = Main.getCfg();
-                String prefix = cfg.getString("Prefix", "§7[TPBlockerFree] ");
-                FileConfiguration lang = Main.getLang();
-                String noPerm = lang.getString("Error.NoPerm", prefix + "You don't have permission to do that").replaceAll("%prefix%", prefix).replaceAll("&", "§");
+                String prefix = Main.getCfg().getString("Prefix", "§7[TPBlockerFree] ");
                 if (args.length > 0) {
+                    FileConfiguration lang = Main.getLang();
+                    String noPerm = lang.getString("Error.NoPerm", prefix + "You don't have permission to do that").replaceAll("%prefix%", prefix).replaceAll("&", "§");
                     switch(args[0]) {
                         case "help" -> {
                             if (sender.hasPermission(perms.get("help"))) {
@@ -61,32 +60,36 @@ public class Commands implements CommandExecutor {
                             }
                         }
                         case "resetdata" -> {
-                            if (args[1].equalsIgnoreCase("Break") || args[1].equalsIgnoreCase("Place") || args[1].equalsIgnoreCase("all")) {
-                                String alias = aliases.get(args[2]) != null ? aliases.get(args[2]) : args[2];
-                                if (alias == null || alias.equals("eg") || alias.equals("ep") || alias.equals("np")) {
-                                    if (sender.hasPermission(perms.get("resetdata"))) {
-                                        BlocksData.getCache().forEach((k, v) -> v.resetStat(args[1].toLowerCase(), alias));
-                                        sender.sendMessage(cfg.getString("Database.ResetData", "Missing: Database.ResetData").replaceAll("%prefix%", prefix).replaceAll("%kind%", args[1]).replaceAll("%type%", alias == null ? "" : alias).replaceAll("&", "§"));
-                                    } else {
-                                        sender.sendMessage(noPerm);
+                            if (args.length == 3) {
+                                if (sender.hasPermission(perms.get("resetdata"))) {
+                                    if (args[1].equalsIgnoreCase("Break") || args[1].equalsIgnoreCase("Place") || args[1].equalsIgnoreCase("all")) {
+                                        String alias = aliases.get(args[2].toLowerCase()) != null ? aliases.get(args[2].toLowerCase()) : aliases.containsValue(args[2].toLowerCase()) || args[2].equalsIgnoreCase("all") ? args[2].toLowerCase() : null;
+                                        if (alias != null) {
+                                            BlocksData.getCache().forEach((k, v) -> v.resetStat(args[1].toLowerCase(), alias));
+                                            sender.sendMessage(lang.getString("Database.ResetData", "Missing: Database.ResetData").replaceAll("%prefix%", prefix).replaceAll("%kind%", args[1]).replaceAll("%type%", alias == null ? "" : alias).replaceAll("&", "§"));
+                                        }
                                     }
+                                } else {
+                                    sender.sendMessage(noPerm);
                                 }
                             }
                         }
                         case "resetname" -> {
-                            if (args[2].equalsIgnoreCase("Break") || args[2].equalsIgnoreCase("Place") || args[2].equalsIgnoreCase("all")) {
-                                String alias = aliases.get(args[3]) != null ? aliases.get(args[3]) : args[3];
-                                if (alias == null || alias.equals("eg") || alias.equals("ep") || alias.equals("np")) {
-                                    if (sender.hasPermission(perms.get("resetname"))) {
-                                        if (BlocksData.getCache().get(args[1]) != null) {
-                                            BlocksData.getCache().get(args[1]).resetStat(args[2].toLowerCase(), alias);
-                                            sender.sendMessage(cfg.getString("Database.ResetName", "Missing: Database.ResetName").replaceAll("%prefix%", prefix).replaceAll("%kind%", args[2]).replaceAll("%type%", alias == null ? "" : alias).replaceAll("%player%", args[1]).replaceAll("&", "§"));
-                                        } else {
-                                            sender.sendMessage(cfg.getString("Database.WrongName", "Missing: Database.WrongName").replaceAll("%prefix%", prefix).replaceAll("%player%", args[1]).replaceAll("&", "§"));
+                            if (args.length == 4) {
+                                if (sender.hasPermission(perms.get("resetname"))) {
+                                    if (args[2].equalsIgnoreCase("Break") || args[2].equalsIgnoreCase("Place") || args[2].equalsIgnoreCase("all")) {
+                                        String alias = aliases.get(args[3].toLowerCase()) != null ? aliases.get(args[3].toLowerCase()) : aliases.containsValue(args[3].toLowerCase()) || args[3].equalsIgnoreCase("all") ? args[3].toLowerCase() : null;
+                                        if (alias != null) {
+                                            if (BlocksData.getCache().get(args[1]) != null) {
+                                                BlocksData.getCache().get(args[1]).resetStat(args[2].toLowerCase(), alias);
+                                                sender.sendMessage(lang.getString("Database.ResetName", "Missing: Database.ResetName").replaceAll("%prefix%", prefix).replaceAll("%kind%", args[2]).replaceAll("%type%", alias == null ? "" : alias).replaceAll("%player%", args[1]).replaceAll("&", "§"));
+                                            } else {
+                                                sender.sendMessage(lang.getString("Database.WrongName", "Missing: Database.WrongName").replaceAll("%prefix%", prefix).replaceAll("%player%", args[1]).replaceAll("&", "§"));
+                                            }
                                         }
-                                    } else {
-                                        sender.sendMessage(noPerm);
                                     }
+                                } else {
+                                    sender.sendMessage(noPerm);
                                 }
                             }
                         }
@@ -97,6 +100,6 @@ public class Commands implements CommandExecutor {
                 }
             }
         }
-        return false;
+        return true;
     }
 }
